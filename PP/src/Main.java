@@ -7,7 +7,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Main extends Application {
 
@@ -15,6 +19,7 @@ public class Main extends Application {
     private TextField searchField;
     private TextArea resultArea;
 
+    @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("File Browser and Search");
 
@@ -52,6 +57,7 @@ public class Main extends Application {
 
     private void searchFiles() {
         String directoryPath = directoryPathField.getText();
+        String searchPhrase = searchField.getText();
         if (directoryPath.isEmpty()) {
             resultArea.setText("Please provide a directory path.");
             return;
@@ -64,21 +70,37 @@ public class Main extends Application {
         }
 
         StringBuilder results = new StringBuilder();
-        listFilesInDirectory(directory, results);
+        searchInDirectory(directory, searchPhrase, results);
         resultArea.setText(results.toString());
     }
 
-    private void listFilesInDirectory(File directory, StringBuilder results) {
+    private void searchInDirectory(File directory, String searchPhrase, StringBuilder results) {
         File[] files = directory.listFiles();
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
-                    listFilesInDirectory(file, results);
+                    searchInDirectory(file, searchPhrase, results);
                 } else {
-                    results.append(file.getAbsolutePath()).append("\n");
+                    if (containsPhrase(file, searchPhrase)) {
+                        results.append(file.getAbsolutePath()).append("\n");
+                    }
                 }
             }
         }
+    }
+
+    private boolean containsPhrase(File file, String searchPhrase) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains(searchPhrase)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static void main(String[] args) {
