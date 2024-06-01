@@ -19,7 +19,6 @@ public class Main extends Application {
     private TextField searchField;
     private TextArea resultArea;
 
-    @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("File Browser and Search");
 
