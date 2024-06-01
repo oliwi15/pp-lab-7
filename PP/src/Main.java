@@ -8,12 +8,11 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import java.io.File;
 
-public class App extends Application {
+public class Main extends Application {
 
     private TextField directoryPathField;
     private TextField searchField;
 
-    @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("File Browser and Search");
 
